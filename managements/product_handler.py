@@ -3,31 +3,28 @@ from functools import reduce
 
 
 def get_product_by_id(id: int = 0) -> dict:
-    result = list(filter(lambda product: product['_id'] == id, products))
-    return {} if len(result) < 1 else result[0]
+    results = [product for product in products if product['_id'] == id]
+    return results[0] if len(results) > 0 else []
 
 
-def get_products_by_type(type: str = ''):
-    result = list(filter(lambda product: product['type'] == type, products))
-    return [] if len(result) < 1 else result
+def get_products_by_type(type: str = '') -> list:
+    results = [product for product in products if product['type'] == type]
+    return results
 
 
-def menu_report():
-    inventory = len(products)
+def menu_report() -> str:
+    count = len(products)
+    avg_price = sum(product['price'] for product in products) / count
 
-    product_prices = map(lambda product: product['price'], products)
-    total_price = reduce(lambda a, b: a + b, product_prices)
-    avg_price = total_price / inventory
-
-    type_keys: list = []
-    maximum: int = 0
+    common_count = {}
+    maximum = 0
+    most_common = ''
     for product in products:
-        if product['type'] not in type_keys:
-            type_keys.append(product['type'])
-            item_count = len(get_products_by_type(product['type']))
+        if product['type'] not in common_count.keys():
+            recurrence = len(get_products_by_type(product['type']))
+            common_count.update({product['type']: recurrence})
 
-            if maximum < item_count:
-                maximum = item_count
-                most_common = product['type']
+            most_common = product['type'] if recurrence > maximum else most_common
+            maximum = recurrence if recurrence > maximum else maximum
 
-    return 'Products count: %i - Average price: %.2f - Most common type: %s' % (inventory, avg_price, most_common)
+    return 'Products count: %i - Average price: %.2f - Most common type: %s' % (count, avg_price, most_common)
