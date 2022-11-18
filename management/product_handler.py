@@ -39,8 +39,8 @@ def menu_report() -> str:
                 'most_common': product['type'] if recurrence > data['recurrence'] else data['most_common'],
                 'recurrence': recurrence if recurrence > data['recurrence'] else data['recurrence']
             })
-
-    return 'Products count: %i - Average price: $%.2f - Most common type: %s' % (count, avg_price, data['most_common'])
+    most_common = data['most_common']
+    return f'Products Count: {count} - Average Price: ${round(avg_price, 2)} - Most Common Type: {most_common}'
 
 
 def add_product(menu: list, **kwargs) -> dict[str: (str | float)]:

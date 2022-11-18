@@ -8,4 +8,4 @@ def calculate_tab(table: list[dict]):
             if product['_id'] == order['_id']:
                 order.update({'price': product['price']})
     summary = sum([order['amount'] * order['price'] for order in table])
-    return {'subtotal': '$%.2f' % summary}
+    return {'subtotal': f'${round(summary, 2)}'}
