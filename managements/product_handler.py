@@ -1,30 +1,70 @@
 from menu import products
-from functools import reduce
+from utils import gen_id
 
 
 def get_product_by_id(id: int = 0) -> dict:
-    results = [product for product in products if product['_id'] == id]
-    return results[0] if len(results) > 0 else []
+    try:
+        if type(id) != int:
+            raise TypeError
+
+        results = [product for product in products if product['_id'] == id]
+        return results[0]
+    except TypeError:
+        return 'product id must be an int'
+    except IndexError:
+        return {}
 
 
-def get_products_by_type(type: str = '') -> list:
-    results = [product for product in products if product['type'] == type]
-    return results
+def get_products_by_type(prodType: str = '') -> list:
+    try:
+        if type(prodType) != str:
+            raise TypeError
+
+        results = [product for product in products if product['type'] == prodType]
+        return results
+    except TypeError:
+        return 'product type must be a str'
 
 
 def menu_report() -> str:
     count = len(products)
     avg_price = sum(product['price'] for product in products) / count
 
-    common_count = {}
-    maximum = 0
-    most_common = ''
+    data = {'types': [], 'most_common': '', 'recurrence': 0}
     for product in products:
-        if product['type'] not in common_count.keys():
+        if product['type'] not in data['types']:
             recurrence = len(get_products_by_type(product['type']))
-            common_count.update({product['type']: recurrence})
+            data.update({
+                'types': [*data['types'], product['type']],
+                'most_common': product['type'] if recurrence > data['recurrence'] else data['most_common'],
+                'recurrence': recurrence if recurrence > data['recurrence'] else data['recurrence']
+            })
 
-            most_common = product['type'] if recurrence > maximum else most_common
-            maximum = recurrence if recurrence > maximum else maximum
+    return 'Products count: %i - Average price: %.2f - Most common type: %s' % (count, avg_price, data['most_common'])
 
-    return 'Products count: %i - Average price: %.2f - Most common type: %s' % (count, avg_price, most_common)
+
+def add_product(menu, **kwargs):
+    new_id = gen_id(menu)
+    new_product = {'_id': new_id, **kwargs}
+    products.append(new_product)
+
+    return new_product
+
+
+def add_product_extra(menu: list, *requiredKeys: list[str], **kwargs):
+    try:
+        new_id = gen_id(menu)
+
+        for key in requiredKeys:
+            if key not in kwargs.keys():
+                absent_key = key
+                raise KeyError
+
+        valid_args = {key: arg for key, arg in kwargs.items() if key in requiredKeys}
+
+        new_product = {'_id': new_id, **valid_args}
+        products.append(new_product)
+
+        return new_product
+    except KeyError:
+        return 'field %s is required' % absent_key
