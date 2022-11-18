@@ -2,7 +2,7 @@ from menu import products
 from utils import gen_id
 
 
-def get_product_by_id(id: int = 0) -> dict:
+def get_product_by_id(id: int = 0) -> (dict | str):
     try:
         if type(id) != int:
             raise TypeError
@@ -15,7 +15,7 @@ def get_product_by_id(id: int = 0) -> dict:
         return {}
 
 
-def get_products_by_type(prodType: str = '') -> list:
+def get_products_by_type(prodType: str = '') -> (list | str):
     try:
         if type(prodType) != str:
             raise TypeError
@@ -40,18 +40,18 @@ def menu_report() -> str:
                 'recurrence': recurrence if recurrence > data['recurrence'] else data['recurrence']
             })
 
-    return 'Products count: %i - Average price: %.2f - Most common type: %s' % (count, avg_price, data['most_common'])
+    return 'Products count: %i - Average price: $%.2f - Most common type: %s' % (count, avg_price, data['most_common'])
 
 
-def add_product(menu, **kwargs):
+def add_product(menu: list, **kwargs) -> dict[str: (str | float)]:
     new_id = gen_id(menu)
     new_product = {'_id': new_id, **kwargs}
-    products.append(new_product)
+    menu.append(new_product)
 
     return new_product
 
 
-def add_product_extra(menu: list, *requiredKeys: list[str], **kwargs):
+def add_product_extra(menu: list, *requiredKeys: list[str], **kwargs) -> dict[str: (str | float)]:
     try:
         new_id = gen_id(menu)
 
@@ -63,7 +63,7 @@ def add_product_extra(menu: list, *requiredKeys: list[str], **kwargs):
         valid_args = {key: arg for key, arg in kwargs.items() if key in requiredKeys}
 
         new_product = {'_id': new_id, **valid_args}
-        products.append(new_product)
+        menu.append(new_product)
 
         return new_product
     except KeyError:

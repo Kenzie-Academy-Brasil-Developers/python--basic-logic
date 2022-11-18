@@ -28,3 +28,5 @@ new_product = {
     "extra_key_1": "extra_value_1",
     "extra_key_2": "extra_value_2"
 }
+
+empty_list = []
