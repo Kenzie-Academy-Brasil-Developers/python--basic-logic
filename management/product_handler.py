@@ -3,27 +3,26 @@ from utils import gen_id
 
 
 def get_product_by_id(id: int = 0) -> (dict | str):
+    if type(id) != int:
+        raise TypeError('product id must be an int')
     try:
-        if type(id) != int:
-            raise TypeError
 
         results = [product for product in products if product['_id'] == id]
         return results[0]
-    except TypeError:
-        return 'product id must be an int'
+    except TypeError as error:
+        return error
     except IndexError:
         return {}
 
 
 def get_products_by_type(prodType: str = '') -> (list | str):
+    if type(prodType) != str:
+        raise TypeError('product type must be a str')
     try:
-        if type(prodType) != str:
-            raise TypeError
-
         results = [product for product in products if product['type'] == prodType]
         return results
-    except TypeError:
-        return 'product type must be a str'
+    except TypeError as error:
+        return error
 
 
 def menu_report() -> str:
@@ -58,7 +57,7 @@ def add_product_extra(menu: list, *requiredKeys: list[str], **kwargs) -> dict[st
         for key in requiredKeys:
             if key not in kwargs.keys():
                 absent_key = key
-                raise KeyError
+                raise KeyError('field %s is required' % absent_key)
 
         valid_args = {key: arg for key, arg in kwargs.items() if key in requiredKeys}
 
@@ -66,5 +65,5 @@ def add_product_extra(menu: list, *requiredKeys: list[str], **kwargs) -> dict[st
         menu.append(new_product)
 
         return new_product
-    except KeyError:
-        return 'field %s is required' % absent_key
+    except KeyError as error:
+        return error
