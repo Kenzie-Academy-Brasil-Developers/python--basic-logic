@@ -51,13 +51,12 @@ def add_product(menu: list, **kwargs) -> dict[str: (str | float)]:
 
 
 def add_product_extra(menu: list, *requiredKeys: list[str], **kwargs) -> dict[str: (str | float)]:
+    for key in requiredKeys:
+        if key not in kwargs.keys():
+            absent_key = key
+            raise KeyError('field %s is required' % absent_key)
     try:
         new_id = gen_id(menu)
-
-        for key in requiredKeys:
-            if key not in kwargs.keys():
-                absent_key = key
-                raise KeyError('field %s is required' % absent_key)
 
         valid_args = {key: arg for key, arg in kwargs.items() if key in requiredKeys}
 
