@@ -6,11 +6,8 @@ def get_product_by_id(id: int = 0) -> (dict | str):
     if type(id) != int:
         raise TypeError('product id must be an int')
     try:
-
         results = [product for product in products if product['_id'] == id]
         return results[0]
-    except TypeError as error:
-        return error
     except IndexError:
         return {}
 
@@ -18,11 +15,9 @@ def get_product_by_id(id: int = 0) -> (dict | str):
 def get_products_by_type(prodType: str = '') -> (list | str):
     if type(prodType) != str:
         raise TypeError('product type must be a str')
-    try:
-        results = [product for product in products if product['type'] == prodType]
-        return results
-    except TypeError as error:
-        return error
+
+    results = [product for product in products if product['type'] == prodType]
+    return results
 
 
 def menu_report() -> str:
@@ -55,14 +50,11 @@ def add_product_extra(menu: list, *requiredKeys: list[str], **kwargs) -> dict[st
         if key not in kwargs.keys():
             absent_key = key
             raise KeyError('field %s is required' % absent_key)
-    try:
         new_id = gen_id(menu)
 
-        valid_args = {key: arg for key, arg in kwargs.items() if key in requiredKeys}
+    valid_args = {key: arg for key, arg in kwargs.items() if key in requiredKeys}
 
-        new_product = {'_id': new_id, **valid_args}
-        menu.append(new_product)
+    new_product = {'_id': new_id, **valid_args}
+    menu.append(new_product)
 
-        return new_product
-    except KeyError as error:
-        return error
+    return new_product
